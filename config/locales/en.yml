@@ -1,5 +1,0 @@
-en:
-  activemodel:
-    errors:
-      messages:
-        permalink_attributes_required: "requires attributes to be set"
