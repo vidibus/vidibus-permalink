@@ -9,7 +9,7 @@ begin
   Jeweler::Tasks.new do |gem|
     gem.name = "vidibus-permalink"
     gem.summary = %Q{Permalink handling}
-    gem.description = %Q{This gem allows changeable permalinks.}
+    gem.description = %Q{Allows changeable permalinks (good for SEO).}
     gem.email = "andre@vidibus.com"
     gem.homepage = "http://github.com/vidibus/vidibus-permalink"
     gem.authors = ["Andre Pankratz"]
