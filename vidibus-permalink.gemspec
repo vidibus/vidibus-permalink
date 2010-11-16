@@ -5,12 +5,12 @@
 
 Gem::Specification.new do |s|
   s.name = %q{vidibus-permalink}
-  s.version = "0.0.0"
+  s.version = "0.0.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Andre Pankratz"]
   s.date = %q{2010-11-16}
-  s.description = %q{Description...}
+  s.description = %q{This gem allows changeable permalinks.}
   s.email = %q{andre@vidibus.com}
   s.extra_rdoc_files = [
     "LICENSE",
@@ -43,7 +43,7 @@ Gem::Specification.new do |s|
   s.rdoc_options = ["--charset=UTF-8"]
   s.require_paths = ["lib"]
   s.rubygems_version = %q{1.3.7}
-  s.summary = %q{Permalink management}
+  s.summary = %q{Permalink handling}
   s.test_files = [
     "spec/models.rb",
      "spec/permalink_spec.rb",
