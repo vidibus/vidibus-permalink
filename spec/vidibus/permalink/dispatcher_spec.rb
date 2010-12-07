@@ -41,6 +41,21 @@ describe "Vidibus::Permalink::Dispatcher" do
       it "should contain the parts of the given path" do
         this.parts.should eql(%w[something pretty])
       end
+
+      it "should deal with empty parts of path" do
+        this.path = "/something//pretty"
+        this.parts.should eql(%w[something pretty])
+      end
+
+      it "should ignore params" do
+        this.path = "/something/pretty?hello=world"
+        this.parts.should eql(%w[something pretty])
+      end
+
+      it "should ignore file extension" do
+        this.path = "/something/pretty?hello=world"
+        this.parts.should eql(%w[something pretty])
+      end
     end
 
     describe "#objects" do

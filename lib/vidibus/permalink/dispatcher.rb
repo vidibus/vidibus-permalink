@@ -22,8 +22,9 @@ module Vidibus
       end
 
       # Returns parts of the path.
+      # Ignores file extension and request params
       def parts
-        @parts ||= path.split("/").reject{|p| p == ""}
+        @parts ||= path.gsub(/(\.[^\/]+)?(\?.*)?$/, "").scan(/[^?\/]+/)
       end
 
       # Returns permalink objects matching the parts.
