@@ -30,6 +30,13 @@ describe "Vidibus::Permalink::Dispatcher" do
       end
     end
 
+    describe "#path=" do
+      it "should set the request path" do
+        this.path = "/something/nasty"
+        this.path.should eql("/something/nasty")
+      end
+    end
+
     describe "#parts" do
       it "should contain the parts of the given path" do
         this.parts.should eql(%w[something pretty])

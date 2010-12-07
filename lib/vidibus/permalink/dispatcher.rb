@@ -7,15 +7,18 @@ module Vidibus
       # Initialize a new Dispatcher instance.
       # Provide an absolute +path+ to be dispatched.
       def initialize(path)
-        unless path.match(/^\//)
-          raise PathError, "Path must be absolute."
-        end
-        @path = path
+        self.path = path
       end
 
       # Returns the path to dispatch.
       def path
         @path
+      end
+
+      # Sets path to dispatch
+      def path=(value)
+        raise PathError.new("Path must be absolute.") unless value.match(/^\//)
+        @path = value
       end
 
       # Returns parts of the path.
