@@ -21,7 +21,7 @@ module Vidibus
         #   permalink :some, :fields
         def permalink(*args)
           class_eval <<-EOS
-            def permalink_attributes
+            def self.permalink_attributes
               #{args.inspect}
             end
           EOS
@@ -42,10 +42,10 @@ module Vidibus
 
       # Initializes a new permalink object and sets permalink attribute.
       def set_permalink
-        if attributes = try!(:permalink_attributes)
+        if attribute_names = self.class.try!(:permalink_attributes)
           changed = false
           values = []
-          for a in attributes
+          for a in attribute_names
             changed = send("#{a}_changed?") unless changed == true
             values << send(a)
           end
