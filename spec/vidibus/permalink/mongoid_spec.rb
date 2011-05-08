@@ -104,6 +104,13 @@ describe "Vidibus::Permalink::Mongoid" do
     end
   end
 
+  describe ".permalink" do
+    it "should set .permalink_attributes" do
+      Car.permalink(:whatever, :it, :takes)
+      Car.permalink_attributes.should eql([:whatever, :it, :takes])
+    end
+  end
+
   describe "#permalink" do
     it "should trigger an error if blank" do
       model = Model.new(:permalink => "")
