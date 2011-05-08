@@ -139,6 +139,10 @@ describe "Vidibus::Permalink::Dispatcher" do
         this = Vidibus::Permalink::Dispatcher.new("/something/new")
         this.redirect_path.should be_nil
       end
+
+      it "should not raise an error if no current permalink object is present" do
+        pending("this has to be solved!")
+      end
     end
   end
 end
