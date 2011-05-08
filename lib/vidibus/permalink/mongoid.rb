@@ -42,20 +42,22 @@ module Vidibus
 
       # Initializes a new permalink object and sets permalink attribute.
       def set_permalink
-        if attribute_names = self.class.try!(:permalink_attributes)
-          changed = false
-          values = []
-          for a in attribute_names
-            changed = send("#{a}_changed?") unless changed == true
-            values << send(a)
-          end
-          return unless permalink.blank? or changed
-          value = values.join(" ")
-          @permalink_object = ::Permalink.for_linkable(self).for_value(value).first || ::Permalink.new(:value => value, :linkable => self)
-          self.permalink = @permalink_object.value
-        else
-          raise PermalinkConfigurationError.new("Permalink attributes have not been assigned!")
+        begin
+          attribute_names = self.class.permalink_attributes
+        rescue NoMethodError
+          raise PermalinkConfigurationError.new("#{self.class}.permalink_attributes have not been assigned! Use #{self.class}.permalink(:my_field) to set it up.")
         end
+
+        changed = false
+        values = []
+        for a in attribute_names
+          changed = send("#{a}_changed?") unless changed == true
+          values << send(a)
+        end
+        return unless permalink.blank? or changed
+        value = values.join(" ")
+        @permalink_object = ::Permalink.for_linkable(self).for_value(value).first || ::Permalink.new(:value => value, :linkable => self)
+        self.permalink = @permalink_object.value
       end
 
       # Stores current new permalink object or updates an existing one that matches.
