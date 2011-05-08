@@ -8,8 +8,10 @@ module Vidibus
       included do
         field :permalink, :type => String
         index :permalink
+
         before_validation :set_permalink
         validates :permalink, :presence => true
+
         after_save :store_permalink_object
         after_destroy :destroy_permalink_objects
       end
@@ -48,7 +50,7 @@ module Vidibus
         permalink_repository.for_linkable(self).asc(:updated_at) if permalink_repository
       end
 
-      protected
+      private
 
       # Initializes a new permalink object and sets permalink attribute.
       def set_permalink
