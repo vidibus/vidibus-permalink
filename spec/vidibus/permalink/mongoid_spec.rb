@@ -1,26 +1,23 @@
 require "spec_helper"
 
-class Model
+class Base
   include Mongoid::Document
   include Vidibus::Uuid::Mongoid
   include Vidibus::Permalink::Mongoid
+end
+
+class Model < Base
   field :name
   permalink :name
 end
 
-class Appointment
-  include Mongoid::Document
-  include Vidibus::Uuid::Mongoid
-  include Vidibus::Permalink::Mongoid
+class Appointment < Base
   field :reason
   field :location
   permalink :reason, :location
 end
 
-class Car
-  include Mongoid::Document
-  include Vidibus::Uuid::Mongoid
-  include Vidibus::Permalink::Mongoid
+class Car < Base
   field :make
 end
 
@@ -29,7 +26,28 @@ describe "Vidibus::Permalink::Mongoid" do
   let(:john) {Model.new(:name => "John Malkovich")}
   let(:appointment) {Appointment.create(:location => "Bistro", :reason => "Lunch")}
 
-  describe "permalink" do
+  describe "validation" do
+    it "should fail if permalink is blank" do
+      model = Model.new(:permalink => "")
+      model.should be_invalid
+      model.errors[:permalink].should have(1).error
+    end
+  end
+
+  describe "destroying" do
+    it "should trigger deleting of all permalink objects with linkable" do
+      appointment.destroy
+      Permalink.all.to_a.should have(:no).permalinks
+    end
+
+    it "should not delete permalink objects of other linkables" do
+      john.save
+      appointment.destroy
+      Permalink.all.to_a.should have(1).permalink
+    end
+  end
+
+  describe "#permalink" do
     it "should set permalink attribute before validation" do
       john.valid?
       john.permalink.should eql("john-malkovich")
@@ -91,34 +109,6 @@ describe "Vidibus::Permalink::Mongoid" do
     end
   end
 
-  describe "destroying" do
-    it "should trigger deleting of all permalink objects with linkable" do
-      appointment.destroy
-      Permalink.all.to_a.should have(:no).permalinks
-    end
-
-    it "should not delete permalink objects of other linkables" do
-      john.save
-      appointment.destroy
-      Permalink.all.to_a.should have(1).permalink
-    end
-  end
-
-  describe ".permalink" do
-    it "should set .permalink_attributes" do
-      Car.permalink(:whatever, :it, :takes)
-      Car.permalink_attributes.should eql([:whatever, :it, :takes])
-    end
-  end
-
-  describe "#permalink" do
-    it "should trigger an error if blank" do
-      model = Model.new(:permalink => "")
-      model.should be_invalid
-      model.errors[:permalink].should have(1).error
-    end
-  end
-
   describe "#permalink_object" do
     it "should return the current permalink object" do
       appointment.update_attributes(:reason => "Drinking")
@@ -149,6 +139,13 @@ describe "Vidibus::Permalink::Mongoid" do
     it "should only return permalink objects assigned to the current linkable" do
       john.save
       appointment.permalink_objects.to_a.should have(1).permalink
+    end
+  end
+
+  describe ".permalink" do
+    it "should set .permalink_attributes" do
+      Car.permalink(:whatever, :it, :takes)
+      Car.permalink_attributes.should eql([:whatever, :it, :takes])
     end
   end
 end
