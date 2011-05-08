@@ -33,14 +33,19 @@ module Vidibus
         end
       end
 
+      # Returns the defined permalink repository object.
+      def permalink_repository
+        @permalink_repository ||= (self.class.permalink_options[:repository] == false) ? nil : ::Permalink
+      end
+
       # Returns the current permalink object.
       def permalink_object
-        @permalink_object || ::Permalink.for_linkable(self).where(:_current => true).first
+        @permalink_object || permalink_repository.for_linkable(self).where(:_current => true).first if permalink_repository
       end
 
       # Returns all permalink objects ordered by time of update.
       def permalink_objects
-        ::Permalink.for_linkable(self).asc(:updated_at)
+        permalink_repository.for_linkable(self).asc(:updated_at) if permalink_repository
       end
 
       protected
@@ -61,8 +66,12 @@ module Vidibus
         end
         return unless permalink.blank? or changed
         value = values.join(" ")
-        @permalink_object = ::Permalink.for_linkable(self).for_value(value).first || ::Permalink.new(:value => value, :linkable => self)
-        self.permalink = @permalink_object.value
+        if permalink_repository
+          @permalink_object = permalink_repository.for_linkable(self).for_value(value).first || permalink_repository.new(:value => value, :linkable => self)
+          self.permalink = @permalink_object.value
+        else
+          self.permalink = ::Permalink.sanitize(value)
+        end
       end
 
       # Stores current new permalink object or updates an existing one that matches.
@@ -73,7 +82,7 @@ module Vidibus
       end
 
       def destroy_permalink_objects
-        ::Permalink.delete_all(:conditions => {:linkable_uuid => uuid})
+        permalink_repository.delete_all(:conditions => {:linkable_uuid => uuid}) if permalink_repository
       end
     end
   end

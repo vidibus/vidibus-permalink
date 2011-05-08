@@ -107,6 +107,18 @@ describe "Vidibus::Permalink::Mongoid" do
     it "should raise an error unless permalink attributes have been defined" do
       expect {Car.create(:make => "Porsche")}.to raise_error(Car::PermalinkConfigurationError)
     end
+
+    it "should be proper with :repository option set to false" do
+      Model.permalink(:name, :repository => false)
+      john = Model.create(:name => "John Malkovich")
+      john.permalink.should eql("john-malkovich")
+    end
+
+    it "should not be stored as permalink object when :repository option is set to false" do
+      Model.permalink(:name, :repository => false)
+      Model.create(:name => "John Malkovich")
+      Permalink.all.should be_empty
+    end
   end
 
   describe "#permalink_object" do
@@ -139,6 +151,18 @@ describe "Vidibus::Permalink::Mongoid" do
     it "should only return permalink objects assigned to the current linkable" do
       john.save
       appointment.permalink_objects.to_a.should have(1).permalink
+    end
+  end
+
+  describe "#permalink_repository" do
+    it "should default to Vidibus::Permalink" do
+      Car.permalink(:whatever)
+      Car.new.permalink_repository.should eql(Permalink)
+    end
+
+    it "should be nil if :repository option is set to false" do
+      Car.permalink(:whatever, :repository => false)
+      Car.new.permalink_repository.should be_nil
     end
   end
 
