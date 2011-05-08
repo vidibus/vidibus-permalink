@@ -35,7 +35,7 @@ class Permalink
       linkable_class.constantize.where(:uuid => linkable_uuid).first
     end
   end
-  
+
   # Assigns given string as value.
   # Sanitizes and increments string, if necessary.
   def value=(string)
@@ -78,10 +78,17 @@ class Permalink
     def for_value(value)
       where(:value => sanitize(value))
     end
-    
+
     # Returns a dispatcher object for given path.
     def dispatch(path)
       Vidibus::Permalink::Dispatcher.new(path)
+    end
+
+    # Sanitizes string: Remove stopwords and format as permalink.
+    # See Vidibus::CoreExtensions::String for details.
+    def sanitize(string)
+      return if string.blank?
+      remove_stopwords(string).permalink
     end
   end
 
@@ -98,13 +105,6 @@ class Permalink
       sanitized = clean unless existing(clean).any?
     end
     sanitized || string.permalink
-  end
-
-  # Sanitize string: Remove stopwords and format as permalink.
-  # See Vidibus::CoreExtensions::String for details.
-  def self.sanitize(string)
-    return if string.blank?
-    remove_stopwords(string).permalink
   end
 
   # Tries to remove stopwords from string.

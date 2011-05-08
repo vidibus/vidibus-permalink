@@ -220,4 +220,12 @@ describe "Permalink" do
       Permalink.dispatch("/something").should be_a(Vidibus::Permalink::Dispatcher)
     end
   end
+
+  describe ".sanitize" do
+    before {stub_stopwords(%w[its a])}
+
+    it "should return a sanitized string without stopwords" do
+      Permalink.sanitize("It's a beautiful day.").should eql("beautiful-day")
+    end
+  end
 end
