@@ -6,7 +6,7 @@ module Vidibus
       class PermalinkConfigurationError < StandardError; end
 
       included do
-        field :permalink
+        field :permalink, :type => String
         before_validation :set_permalink
         validates :permalink, :presence => true
         after_save :store_permalink_object
