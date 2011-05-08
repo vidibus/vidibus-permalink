@@ -50,8 +50,7 @@ module Vidibus
           end
           return unless permalink.blank? or changed
           value = values.join(" ")
-          @permalink_object = ::Permalink.for_linkable(self).for_value(value).first
-          @permalink_object ||= ::Permalink.new(:value => value, :linkable => self)
+          @permalink_object = ::Permalink.for_linkable(self).for_value(value).first || ::Permalink.new(:value => value, :linkable => self)
           self.permalink = @permalink_object.value
         else
           raise PermalinkConfigurationError.new("Permalink attributes have not been assigned!")
