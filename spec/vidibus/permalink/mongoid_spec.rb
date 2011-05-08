@@ -147,5 +147,10 @@ describe "Vidibus::Permalink::Mongoid" do
       Car.permalink(:whatever, :it, :takes)
       Car.permalink_attributes.should eql([:whatever, :it, :takes])
     end
+
+    it "should set .permalink_options" do
+      Car.permalink(:whatever, :it, :takes, :repository => false)
+      Car.permalink_options.should eql({:repository => false})
+    end
   end
 end

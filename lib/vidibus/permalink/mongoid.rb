@@ -20,9 +20,14 @@ module Vidibus
         # Usage:
         #   permalink :some, :fields
         def permalink(*args)
+          options = args.extract_options!
           class_eval <<-EOS
             def self.permalink_attributes
               #{args.inspect}
+            end
+
+            def self.permalink_options
+              #{options.inspect}
             end
           EOS
         end
