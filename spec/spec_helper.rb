@@ -32,10 +32,12 @@ I18n.load_path += Dir[File.join('config', 'locales', '**', '*.{rb,yml}')]
 
 # Helper for stubbing time. Define String to be set as Time.now.
 # Usage:
-#   stub_time!('01.01.2010 14:00')
-#   stub_time!(2.days.ago)
+#   stub_time('01.01.2010 14:00')
+#   stub_time(2.days.ago)
+#
 def stub_time!(string = nil)
-  now = string ? Time.parse(string.to_s) : Time.now
-  stub(Time).now { now }
+  string ||= Time.now.to_s(:db)
+  now = Time.parse(string.to_s)
+  stub(Time).now {now}
   now
 end
