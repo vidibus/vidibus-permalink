@@ -7,6 +7,7 @@ module Vidibus
 
       included do
         field :permalink, :type => String
+        index :permalink
         before_validation :set_permalink
         validates :permalink, :presence => true
         after_save :store_permalink_object
