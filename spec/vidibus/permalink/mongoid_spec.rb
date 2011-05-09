@@ -108,16 +108,19 @@ describe "Vidibus::Permalink::Mongoid" do
       expect {Car.create(:make => "Porsche")}.to raise_error(Car::PermalinkConfigurationError)
     end
 
-    it "should be proper with :repository option set to false" do
-      Model.permalink(:name, :repository => false)
-      john = Model.create(:name => "John Malkovich")
-      john.permalink.should eql("john-malkovich")
-    end
+    context "with :repository option set to false" do
+      before {Model.permalink(:name, :repository => false)}
 
-    it "should not be stored as permalink object when :repository option is set to false" do
-      Model.permalink(:name, :repository => false)
-      Model.create(:name => "John Malkovich")
-      Permalink.all.should be_empty
+      it "should be proper" do
+        john = Model.create(:name => "John Malkovich")
+        john.permalink.should eql("john-malkovich")
+      end
+
+      it "should not be stored as permalink object when :repository option is set to false" do
+        Model.create(:name => "John Malkovich")
+        Permalink.all.should be_empty
+      end
+      end
     end
   end
 
