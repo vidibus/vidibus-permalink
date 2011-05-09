@@ -120,6 +120,12 @@ describe "Vidibus::Permalink::Mongoid" do
         Model.create(:name => "John Malkovich")
         Permalink.all.should be_empty
       end
+
+      it "should be unique for model" do
+        pending "Allow incrementation for class that serves as repository."
+        Model.create(:name => "John Malkovich")
+        john = Model.create(:name => "John Malkovich")
+        john.permalink.should_not eql("john-malkovich")
       end
     end
   end
