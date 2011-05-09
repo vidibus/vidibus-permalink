@@ -1,4 +1,4 @@
-= vidibus-permalink
+= Vidibus::Permalink
 
 This gem allows changeable permalinks. That may be an oxymoron, but it's really useful from a SEO perspective.
 
@@ -23,6 +23,7 @@ TODO: describe
 
 * Add controller extension for automatic dispatching
 * Limit length of permalinks
+* Refactor codebase so that incrementation is not limited to Permalink class
 
 
 == Ideas (for a separate gem)
