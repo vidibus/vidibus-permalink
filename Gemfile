@@ -11,5 +11,5 @@ group :development do
   gem "rake"
   gem "rspec", "~> 2"
   gem "rr"
-  gem "relevance-rcov"
+  gem "rcov"
 end
