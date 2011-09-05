@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "lib"))
+$LOAD_PATH.unshift(File.join(File.dirname(__FILE__), "..", "app"))
 
 require "rubygems"
 require "rspec"
@@ -12,7 +13,7 @@ require "vidibus-words"
 
 require "models"
 require "vidibus-permalink"
-require "app/models/permalink"
+require "models/permalink"
 
 Mongoid.configure do |config|
   name = "vidibus-permalink_test"
