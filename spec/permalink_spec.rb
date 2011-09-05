@@ -82,6 +82,15 @@ describe "Permalink" do
     end
   end
 
+  describe "#scope=" do
+    let(:this) { Permalink.new }
+
+    it "should convert the scope to an array" do
+      this.scope = {"realm" => "rugby"}
+      this.scope.should eq(["realm:rugby"])
+    end
+  end
+
   describe "#linkable" do
     before {this.instance_variable_set("@linkable", nil)}
 
@@ -212,6 +221,15 @@ describe "Permalink" do
       this
       Permalink.create!(:value => "Buh!", :linkable => category)
       Permalink.for_linkable(asset).to_a.should have(1).permalink
+    end
+  end
+
+  describe ".for_scope" do
+    it "should find objects within the given scope" do
+      this
+      scope = {"realm" => "rugby"}
+      Permalink.create!(:value => "Hey Bob!", :scope => scope, :linkable => asset)
+      Permalink.for_scope(scope).to_a.should have(1).permalink
     end
   end
 

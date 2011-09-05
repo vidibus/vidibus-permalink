@@ -7,6 +7,7 @@ class Permalink
   field :value
   field :linkable_class
   field :linkable_uuid
+  field :scope, :type => Array
   field :_current, :type => Boolean, :default => true
 
   before_save :set_current
@@ -49,6 +50,14 @@ class Permalink
     string
   end
 
+  def scope=(scope)
+    if array = scope
+      array = self.class.scope_list(scope)
+      self.write_attribute(:scope, array)
+    end
+    array
+  end
+
   # Returns true if this permalink is the current one
   # of the assigned linkable.
   def current?
@@ -67,7 +76,6 @@ class Permalink
   end
 
   class << self
-
     # Scope method for finding Permalinks for given object.
     def for_linkable(object)
       where(:linkable_uuid => object.uuid)
@@ -77,6 +85,11 @@ class Permalink
     # The value will be sanitized.
     def for_value(value)
       where(:value => sanitize(value))
+    end
+
+    def for_scope(scope)
+      return all unless scope
+      all_in(:scope => scope_list(scope))
     end
 
     # Returns a dispatcher object for given path.
@@ -89,6 +102,11 @@ class Permalink
     def sanitize(string)
       return if string.blank?
       remove_stopwords(string).permalink
+    end
+
+    def scope_list(scope)
+      return [] unless scope
+      scope.inject([]) { |array, (key, value)| array << "#{key}:#{value}"; array}
     end
   end
 
