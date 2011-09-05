@@ -52,7 +52,7 @@ module Vidibus
 
       # Returns permalink scope.
       def permalink_scope
-        @permalink_scope ||= self.class.permalink_options[:scope]
+        @permalink_scope ||= get_scope
       end
 
       def find_or_initialize(value, scope)
@@ -61,6 +61,25 @@ module Vidibus
       end
 
       private
+
+      def get_scope
+        scope = self.class.permalink_options[:scope]
+        return unless scope
+
+        {}.tap do |hash|
+          scope.each do |key, value|
+            if value.kind_of?(String)
+              hash[key] = value
+            elsif value.kind_of?(Symbol) && respond_to?(value)
+              hash[key] = send(value)
+            else
+              raise PermalinkConfigurationError.new(
+                %Q{No scope value for key "#{key}" found.}
+              )
+            end
+          end
+        end
+      end
 
       # Initializes a new permalink object and sets permalink attribute.
       def set_permalink

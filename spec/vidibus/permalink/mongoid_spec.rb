@@ -11,10 +11,6 @@ class Model < Base
   permalink :name
 end
 
-class ModelWithScope < Model
-  permalink :name, :scope => {"realm" => "rugby"}
-end
-
 class Appointment < Base
   field :reason
   field :location
@@ -152,8 +148,31 @@ describe "Vidibus::Permalink::Mongoid" do
 
   describe "#permalink_scope" do
     it "should return the current permalink scope" do
+      class ModelWithScope < Model
+        permalink :name, :scope => {"realm" => "rugby"}
+      end
+
       bob = ModelWithScope.new(:name => "Bob Smith")
       bob.permalink_scope.should eq({"realm" => "rugby"})
+    end
+
+    it "should perform and return the current permalink scope" do
+      class ModelWithScope < Model
+        def category; "sport"; end
+        permalink :name, :scope => {"realm" => "hockey", "category" => :category}
+      end
+
+      bob = ModelWithScope.new(:name => "Bob Smith")
+      bob.permalink_scope.should eq({"realm" => "hockey", "category" => "sport"})
+    end
+
+    it "should raise an error if the scope value is invalid" do
+      class ModelWithScope < Model
+        permalink :name, :scope => {"realm" => :realm}
+      end
+
+      bob = ModelWithScope.new(:name => "Bob Smith")
+      expect { bob.permalink_scope }.to raise_exception
     end
   end
 
