@@ -1,38 +1,31 @@
-= Vidibus::Permalink
+# Vidibus::Permalink
 
 This gem allows changeable permalinks. That may be an oxymoron, but it's really useful from a SEO perspective.
 
-It is part of the open source SOA framework Vidibus: http://vidibus.org
+This gem is part of [Vidibus](http://vidibus.org), an open source toolset for building distributed (video) applications.
 
-
-== Installation
+## Installation
 
 Add the dependency to the Gemfile of your application:
 
+```
   gem "vidibus-permalink"
+```
 
 Then call bundle install on your console.
 
+## TODO
 
-== Usage
+* Add controller extension for automatic dispatching.
+* Limit length of permalinks.
+* Refactor codebase so that incrementation is not limited to Permalink class.
 
-TODO: describe
-
-
-== TODO
-
-* Add controller extension for automatic dispatching
-* Limit length of permalinks
-* Refactor codebase so that incrementation is not limited to Permalink class
-
-
-== Ideas (for a separate gem)
+## Ideas (for a separate gem)
 
 * Catch 404s and store invalid routes.
 * Make invalid routes assignable from a web interface.
 * Try to suggest a matching Linkable by valid parts of the request path.
 
-
-== Copyright
+## Copyright
 
 Copyright (c) 2010 Andre Pankratz. See LICENSE for details.
