@@ -6,8 +6,9 @@ module Vidibus
 
       # Initialize a new Dispatcher instance.
       # Provide an absolute +path+ to be dispatched.
-      def initialize(path)
+      def initialize(path, options = {})
         self.path = path
+        @scope = options[:scope]
       end
 
       # Returns the path to dispatch.
@@ -58,9 +59,8 @@ module Vidibus
 
       private
 
-      # TODO: Allow scopes
       def resolve_path
-        results = ::Permalink.any_in(:value => parts)
+        results = ::Permalink.for_scope(@scope).any_in(:value => parts)
         links = Array.new(parts.length)
         done = {}
         for result in results

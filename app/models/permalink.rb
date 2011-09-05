@@ -93,8 +93,8 @@ class Permalink
     end
 
     # Returns a dispatcher object for given path.
-    def dispatch(path)
-      Vidibus::Permalink::Dispatcher.new(path)
+    def dispatch(path, options = {})
+      Vidibus::Permalink::Dispatcher.new(path, options)
     end
 
     # Sanitizes string: Remove stopwords and format as permalink.

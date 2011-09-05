@@ -83,6 +83,15 @@ describe "Vidibus::Permalink::Dispatcher" do
         this = Vidibus::Permalink::Dispatcher.new("/pretty/new")
         this.objects.should eql([asset_permalink, nil])
       end
+
+      it "should only contain records within the same scope", :focus => true do
+        scope = {"realm" => "rugby"}
+        Permalink.create!(:value => "New", :scope => scope, :linkable => asset)
+        Permalink.create!(:value => "New", :scope => {"realm" => "hockey"}, :linkable => asset)
+
+        this = Vidibus::Permalink::Dispatcher.new("/new", :scope => scope)
+        this.objects.compact.should have(1).permalink
+      end
     end
 
     describe "found?" do
