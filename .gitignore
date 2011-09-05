@@ -3,4 +3,5 @@ Gemfile.lock
 *.gem
 .bundle
 rdoc
+.rbenv-version
 
