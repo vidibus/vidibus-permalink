@@ -1,11 +1,10 @@
-require "rails"
+require "active_support"
 require "mongoid"
 require "vidibus-core_extensions"
 require "vidibus-uuid"
 require "vidibus-words"
-    
-$:.unshift(File.join(File.dirname(__FILE__), "vidibus"))
-require "permalink"
+
+require "vidibus/permalink"
 
 if defined?(Rails)
   module Vidibus::Permalink

@@ -1,2 +1,2 @@
-require "permalink/mongoid"
-require "permalink/dispatcher"
+require "vidibus/permalink/mongoid"
+require "vidibus/permalink/dispatcher"

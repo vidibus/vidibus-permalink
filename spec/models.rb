@@ -11,10 +11,3 @@ class Category
   include Vidibus::Uuid::Mongoid
   field :label
 end
-
-# class Article
-#   include Mongoid::Document
-#   field :label
-#   field :date, :format => Date
-#   #permalink :label, :date
-# end
