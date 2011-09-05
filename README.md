@@ -1,4 +1,4 @@
-# Vidibus::Permalink
+# Vidibus::Permalink [![](http://travis-ci.org/vidibus/vidibus-permalink.png)](http://travis-ci.org/vidibus/vidibus-permalink) [![](http://stillmaintained.com/vidibus/vidibus-permalink.png)](http://stillmaintained.com/vidibus/vidibus-permalink)
 
 This gem allows changeable permalinks. That may be an oxymoron, but it's really useful from a SEO perspective.
 
