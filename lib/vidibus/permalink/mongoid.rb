@@ -20,7 +20,7 @@ module Vidibus
 
         # Sets permalink attributes.
         # Usage:
-        #   permalink :some, :fields
+        #   permalink :some, :fields, :scope => {:realm => "rugby"}
         def permalink(*args)
           options = args.extract_options!
           class_eval <<-EOS
@@ -50,6 +50,16 @@ module Vidibus
         permalink_repository.for_linkable(self).asc(:updated_at) if permalink_repository
       end
 
+      # Returns permalink scope.
+      def permalink_scope
+        @permalink_scope ||= self.class.permalink_options[:scope]
+      end
+
+      def find_or_initialize(value, scope)
+        permalink_repository.for_linkable(self).for_value(value).for_scope(scope).first ||
+          permalink_repository.new(:value => value, :scope => scope, :linkable => self)
+      end
+
       private
 
       # Initializes a new permalink object and sets permalink attribute.
@@ -69,7 +79,7 @@ module Vidibus
         return unless permalink.blank? or changed
         value = values.join(" ")
         if permalink_repository
-          @permalink_object = permalink_repository.for_linkable(self).for_value(value).first || permalink_repository.new(:value => value, :linkable => self)
+          @permalink_object = find_or_initialize(value, permalink_scope)
           self.permalink = @permalink_object.value
         else
           self.permalink = ::Permalink.sanitize(value)

@@ -11,6 +11,10 @@ class Model < Base
   permalink :name
 end
 
+class ModelWithScope < Model
+  permalink :name, :scope => {"realm" => "rugby"}
+end
+
 class Appointment < Base
   field :reason
   field :location
@@ -143,6 +147,13 @@ describe "Vidibus::Permalink::Mongoid" do
       appointment.reason = "Drinking"
       appointment.valid?
       appointment.permalink_object.should be_a_new_record
+    end
+  end
+
+  describe "#permalink_scope" do
+    it "should return the current permalink scope" do
+      bob = ModelWithScope.new(:name => "Bob Smith")
+      bob.permalink_scope.should eq({"realm" => "rugby"})
     end
   end
 
