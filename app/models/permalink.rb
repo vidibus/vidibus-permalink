@@ -74,6 +74,12 @@ class Permalink
     end
   end
 
+  # Sets this permalink as the current one.
+  # All other permalinks of this linkable will be updated after saving.
+  def current!
+    self._current = true
+  end
+
   class << self
     # Scope method for finding Permalinks for given object.
     def for_linkable(object)
