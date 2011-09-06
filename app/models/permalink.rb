@@ -112,7 +112,7 @@ class Permalink
 
     def scope_list(scope)
       return [] unless scope
-      scope.inject([]) { |array, (key, value)| array << "#{key}:#{value}"; array}
+      scope.map {|key, value| "#{key}:#{value}"}
     end
   end
 
