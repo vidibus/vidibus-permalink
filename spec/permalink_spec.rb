@@ -42,6 +42,39 @@ describe "Permalink" do
     end
   end
 
+  describe "creating" do
+    it "should set current on the latest permalink and unset current on all other permalinks of the assigned linkable" do
+      first = create_permalink
+      second = create_permalink
+      third = create_permalink
+      first.reload.current?.should be_false
+      second.reload.current?.should be_false
+      third.reload.current?.should be_true
+    end
+
+    it "should not affect permalinks of other linkables" do
+      this
+      another = Permalink.create!(:value => "Buh!", :linkable => category)
+      another.current?.should be_true
+      this.reload.current?.should be_true
+    end
+  end
+
+  describe "updating" do
+    it "should unset current on all other permalinks of the assigned linkable if the current permalink is current" do
+      first = create_permalink
+      second = create_permalink
+      third = create_permalink
+      first.reload # This is important! Caching will hurt you!
+
+      first.current!
+      first.save
+      first.reload.current?.should be_true
+      second.reload.current?.should be_false
+      third.reload.current?.should be_false
+    end
+  end
+
   describe "deleting" do
     let(:last) {Permalink.create!(:value => "Buh!", :linkable => asset)}
 
@@ -185,26 +218,10 @@ describe "Permalink" do
     end
   end
 
-    it "should return true after update" do
-      another
-      this.save
-      this.reload.current?.should be_true
-    end
-
-    it "should return false on all other permalinks of the assigned linkable" do
-      first = create_permalink
-      second = create_permalink
-      third = create_permalink
-      first.reload.current?.should be_false
-      second.reload.current?.should be_false
-      third.reload.current?.should be_true
-    end
-
-    it "should not affect permalinks of other linkables" do
-      this
-      another = Permalink.create!(:value => "Buh!", :linkable => category)
-      another.current?.should be_true
-      this.reload.current?.should be_true
+  describe "#current!" do
+    it "should set _current to true" do
+      this.current!
+      this._current.should be_true
     end
   end
 
