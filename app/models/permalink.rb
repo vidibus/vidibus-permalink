@@ -61,7 +61,7 @@ class Permalink
   # Returns true if this permalink is the current one
   # of the assigned linkable.
   def current?
-    @is_current ||= !!_current
+    !!_current
   end
 
   # Returns the current permalink of the assigned linkable.

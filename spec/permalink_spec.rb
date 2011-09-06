@@ -170,9 +170,20 @@ describe "Permalink" do
   end
 
   describe "#current?" do
-    it "should return true after creation" do
+    it "should be true by default" do
+      this.current.should be_true
+    end
+
+    it "should return true if _current is true" do
+      this._current = true
       this.current?.should be_true
     end
+
+    it "should return false unless _current is true" do
+      this._current = false
+      this.current?.should be_false
+    end
+  end
 
     it "should return true after update" do
       another
