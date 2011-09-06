@@ -10,7 +10,6 @@ class Permalink
   field :scope, :type => Array
   field :_current, :type => Boolean, :default => true
 
-  before_save :set_current
   after_destroy :set_last_current, :if => :current?
 
   validates :linkable_uuid, :uuid => true
@@ -152,12 +151,6 @@ class Permalink
   def existing(string)
     @existing ||= {}
     @existing[string] ||= Permalink.where(:value => /^#{string}(-\d+)?$/).excludes(:_id => id).to_a
-  end
-
-  # Sets this permalink as the current one and unsets all others.
-  def set_current
-    unset_other_current
-    self._current = true
   end
 
   # Sets _current to false on all permalinks of the assigned linkable.
