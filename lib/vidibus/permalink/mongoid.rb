@@ -55,12 +55,14 @@ module Vidibus
         @permalink_scope ||= get_scope
       end
 
-      def find_or_initialize(value, scope)
-        permalink_repository.for_linkable(self).for_value(value).for_scope(scope).first ||
-          permalink_repository.new(:value => value, :scope => scope, :linkable => self)
-      end
-
       private
+
+      # Returns a existing or new permalink object with wanted value.
+      # The permalink scope is also applied
+      def permalink_object_by_value(value)
+        permalink_repository.for_linkable(self).for_value(value).for_scope(permalink_scope).first ||
+          permalink_repository.new(:value => value, :scope => permalink_scope, :linkable => self)
+      end
 
       def get_scope
         scope = self.class.permalink_options[:scope]
@@ -98,7 +100,7 @@ module Vidibus
         return unless permalink.blank? or changed
         value = values.join(" ")
         if permalink_repository
-          @permalink_object = find_or_initialize(value, permalink_scope)
+          @permalink_object = permalink_object_by_value(value)
           self.permalink = @permalink_object.value
         else
           self.permalink = ::Permalink.sanitize(value)
