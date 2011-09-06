@@ -10,6 +10,7 @@ class Permalink
   field :scope, :type => Array
   field :_current, :type => Boolean, :default => true
 
+  after_save :unset_other_current, :if => :current?
   after_destroy :set_last_current, :if => :current?
 
   validates :linkable_uuid, :uuid => true
