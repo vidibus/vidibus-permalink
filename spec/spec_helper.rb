@@ -18,6 +18,7 @@ require "models/permalink"
 Mongoid.configure do |config|
   name = "vidibus-permalink_test"
   host = "localhost"
+  # config.master = Mongo::Connection.new("localhost", 27017, :logger => Logger.new($stdout, :info)).db(name)
   config.master = Mongo::Connection.new.db(name)
   config.logger = nil
 end
