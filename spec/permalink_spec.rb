@@ -58,6 +58,13 @@ describe "Permalink" do
       another.current?.should be_true
       this.reload.current?.should be_true
     end
+
+    it "should not affect permalinks in different scopes" do
+      this
+      another = Permalink.create!(:value => "Buh!", :linkable => asset, :scope => {:realm => "rubgy"})
+      another.current?.should be_true
+      this.reload.current?.should be_true
+    end
   end
 
   describe "updating" do

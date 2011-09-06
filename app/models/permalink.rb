@@ -163,8 +163,10 @@ class Permalink
   # Sets _current to false on all permalinks of the assigned linkable.
   def unset_other_current
     return unless linkable
+    conditions = {:linkable_uuid => linkable_uuid, :_id => {"$ne" => _id}}
+    conditions[:scope] = Permalink.scope_list(scope) if scope.present?
     collection.update(
-      {:linkable_uuid => linkable_uuid, :_id => {"$ne" => _id}},
+      conditions,
       {"$set" => {:_current => false}},
       {:multi => true}
     )
