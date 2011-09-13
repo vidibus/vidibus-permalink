@@ -101,6 +101,7 @@ module Vidibus
         value = values.join(" ")
         if permalink_repository
           @permalink_object = permalink_object_by_value(value)
+          @permalink_object.sanitize_value
           @permalink_object.current!
           self.permalink = @permalink_object.value
         else

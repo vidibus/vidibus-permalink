@@ -149,10 +149,22 @@ describe "Permalink" do
     end
   end
 
-  describe "#value" do
-    it "should be sanitized when set" do
+  describe "#sanitize_value" do
+    it "should sanitized the value" do
       this.value = "Hey Joe!"
+      this.sanitize_value
       this.value.should eql("hey-joe")
+    end
+
+    it "should increment the value" do
+      create_permalink(:value => "Hey Joe!")
+      this.sanitize_value
+      this.value.should eql("hey-joe-2")
+    end
+
+    it "should be called before validation" do
+      mock(this).sanitize_value
+      this.valid?
     end
 
     context "with stop words" do
@@ -160,17 +172,20 @@ describe "Permalink" do
 
       it "should be cleaned from stop words before validation" do
         this.value = "It's a beautiful day."
+        this.sanitize_value
         this.value.should eql("beautiful-day")
       end
 
       it "should not be cleaned from stop words if the resulting value would be empty" do
         this.value = "It's a..."
+        this.sanitize_value
         this.value.should eql("it-s-a")
       end
 
       it "should not be cleaned from stop words if the resulting value already exists" do
         Permalink.create!(:value => "It's a beautiful day.", :linkable => asset)
         this = Permalink.new(:value => "It's a beautiful day.")
+        this.sanitize_value
         this.value.should eql("it-s-a-beautiful-day")
       end
     end
@@ -205,6 +220,11 @@ describe "Permalink" do
         create_permalink
         second.reload.destroy
         create_permalink.value.should eql("super-trouper-2")
+      end
+
+      it "should not increase because of different scopes" do
+        create_permalink(:scope => {"realm" => "rugby"})
+        create_permalink(:scope => {"realm" => "hockey"}).value.should eq("super-trouper")
       end
     end
   end
