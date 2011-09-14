@@ -10,7 +10,7 @@ class Permalink
   field :scope, :type => Array
   field :_current, :type => Boolean, :default => true
 
-  before_validation :sanitize_value
+  before_validation :sanitize_value!
   after_save :unset_other_current, :if => :current?
   after_destroy :set_last_current, :if => :current?
 
@@ -39,8 +39,8 @@ class Permalink
   end
 
   # Sanitizes and increments string, if necessary.
-  def sanitize_value
-    return true unless value_changed?
+  def sanitize_value!
+    return true unless value_changed? || new_record?
     string = sanitize(value)
     if string != value_was
       string = increment(string)

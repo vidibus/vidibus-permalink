@@ -9,10 +9,12 @@ module Vidibus
         field :permalink, :type => String
         index :permalink
 
-        before_validation :set_permalink
-        validates :permalink, :presence => true
+        attr_accessor :skip_permalink
 
-        after_save :store_permalink_object
+        before_validation :set_permalink, :unless => :skip_permalink
+        validates :permalink, :presence => true, :unless => :skip_permalink
+
+        after_save :store_permalink_object, :unless => :skip_permalink
         after_destroy :destroy_permalink_objects
       end
 
@@ -42,7 +44,8 @@ module Vidibus
 
       # Returns the current permalink object.
       def permalink_object
-        @permalink_object || permalink_repository.for_linkable(self).where(:_current => true).first if permalink_repository
+        @permalink_object ||
+          permalink_repository.for_linkable(self).where(:_current => true).first if permalink_repository
       end
 
       # Returns all permalink objects ordered by time of update.
@@ -101,7 +104,7 @@ module Vidibus
         value = values.join(" ")
         if permalink_repository
           @permalink_object = permalink_object_by_value(value)
-          @permalink_object.sanitize_value
+          @permalink_object.sanitize_value!
           @permalink_object.current!
           self.permalink = @permalink_object.value
         else
