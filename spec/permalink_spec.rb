@@ -301,4 +301,16 @@ describe "Permalink" do
       Permalink.sanitize("It's a beautiful day.").should eql("beautiful-day")
     end
   end
+
+  describe ".scope_list" do
+    it "should convert a scope hash" do
+      scope = {"realm" => "rugby"}
+      Permalink.scope_list(scope).should eq(["realm:rugby"])
+    end
+
+    it "should not convert an array twice" do
+      scope = ["realm:rugby"]
+      Permalink.scope_list(scope).should eq(scope)
+    end
+  end
 end

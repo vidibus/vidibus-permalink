@@ -111,6 +111,7 @@ class Permalink
 
     def scope_list(scope)
       return [] unless scope
+      return scope if scope.kind_of?(Array)
       scope.map {|key, value| "#{key}:#{value}"}
     end
   end
