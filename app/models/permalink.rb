@@ -10,6 +10,7 @@ class Permalink
   field :scope, :type => Array
   field :_current, :type => Boolean, :default => true
 
+  before_validation :sanitize_value!
   after_save :unset_other_current, :if => :current?
   after_destroy :set_last_current, :if => :current?
 
@@ -37,17 +38,15 @@ class Permalink
     end
   end
 
-  # Assigns given string as value.
   # Sanitizes and increments string, if necessary.
-  def value=(string)
-    unless string == value
-      string = sanitize(string)
-      unless string == value
-        string = increment(string)
-        self.write_attribute(:value, string)
-      end
+  def sanitize_value!
+    return true unless value_changed? || new_record?
+    string = sanitize(value)
+    if string != value_was
+      string = increment(string)
     end
-    string
+    self.value = string
+    true
   end
 
   def scope=(scope)
@@ -112,6 +111,7 @@ class Permalink
 
     def scope_list(scope)
       return [] unless scope
+      return scope if scope.kind_of?(Array)
       scope.map {|key, value| "#{key}:#{value}"}
     end
   end
@@ -157,7 +157,8 @@ class Permalink
   # Finds existing permalinks with current value.
   def existing(string)
     @existing ||= {}
-    @existing[string] ||= Permalink.where(:value => /^#{string}(-\d+)?$/).excludes(:_id => id).to_a
+    @existing[string] ||=
+      Permalink.for_scope(scope).where(:value => /^#{string}(-\d+)?$/).excludes(:_id => id).to_a
   end
 
   # Sets _current to false on all permalinks of the assigned linkable.
