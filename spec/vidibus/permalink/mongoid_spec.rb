@@ -219,6 +219,43 @@ describe 'Vidibus::Permalink::Mongoid' do
     end
   end
 
+  describe '#static_permalink' do
+    it 'should be nil before validation' do
+      john.static_permalink.should be_nil
+    end
+
+    it 'should be set from permalink' do
+      john.valid?
+      john.static_permalink.should eq('john-malkovich')
+    end
+
+    context 'with an existing permalink' do
+      before do
+        john.valid?
+      end
+
+      context 'if record is persisted' do
+        before do
+          john.save
+        end
+
+        it 'should not change when permalink is changed' do
+          john.name = 'Peter Pan'
+          john.valid?
+          john.static_permalink.should eq('john-malkovich')
+        end
+      end
+
+      context 'if record is new' do
+        it 'should change when permalink is changed' do
+          john.name = 'Peter Pan'
+          john.valid?
+          john.static_permalink.should eq('peter-pan')
+        end
+      end
+    end
+  end
+
   describe '.permalink' do
     it 'should set .permalink_attributes' do
       Car.permalink(:whatever, :it, :takes)

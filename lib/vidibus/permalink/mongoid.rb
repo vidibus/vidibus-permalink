@@ -7,7 +7,8 @@ module Vidibus
 
       included do
         field :permalink, :type => String
-        index :permalink
+        field :static_permalink, :type => String
+        index :permalink, :static_permalink
 
         attr_accessor :skip_permalink
 
@@ -109,6 +110,12 @@ module Vidibus
           self.permalink = @permalink_object.value
         else
           self.permalink = ::Permalink.sanitize(value)
+        end
+
+        if new_record?
+          self.static_permalink = self.permalink
+        else
+          self.static_permalink ||= self.permalink
         end
       end
 
