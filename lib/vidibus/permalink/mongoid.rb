@@ -8,7 +8,9 @@ module Vidibus
       included do
         field :permalink, :type => String
         field :static_permalink, :type => String
-        index :permalink, :static_permalink
+
+        index :permalink
+        index :static_permalink
 
         attr_accessor :skip_permalink
 
