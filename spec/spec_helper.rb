@@ -8,9 +8,10 @@ $:.unshift File.expand_path('../../app', __FILE__)
 require 'rubygems'
 require 'rspec'
 require 'rr'
-require 'models'
-require 'models/permalink'
 require 'vidibus-permalink'
+
+Dir[File.expand_path('spec/support/**/*.rb')].each { |f| require f }
+require 'models/permalink'
 
 Mongoid.configure do |config|
   name = 'vidibus-permalink_test'

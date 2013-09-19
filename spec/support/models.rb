@@ -1,4 +1,4 @@
-require "vidibus-uuid"
+require 'vidibus-uuid'
 
 class Asset
   include Mongoid::Document
