@@ -13,6 +13,7 @@ Gem::Specification.new do |s|
   s.homepage = 'https://github.com/vidibus/vidibus-permalink'
   s.summary = 'Permalink handling'
   s.description = 'Allows changeable permalinks (good for SEO).'
+  s.license = 'MIT'
 
   s.required_rubygems_version = '>= 1.3.6'
 
