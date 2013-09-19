@@ -5,18 +5,12 @@ $:.unshift File.expand_path('../../', __FILE__)
 $:.unshift File.expand_path('../../lib', __FILE__)
 $:.unshift File.expand_path('../../app', __FILE__)
 
-require "rubygems"
-require "rspec"
-require "rr"
-require "mongoid"
-require "active_support/core_ext"
-require "vidibus-core_extensions"
-require "vidibus-uuid"
-require "vidibus-words"
-
-require "models"
-require "vidibus-permalink"
-require "models/permalink"
+require 'rubygems'
+require 'rspec'
+require 'rr'
+require 'models'
+require 'models/permalink'
+require 'vidibus-permalink'
 
 Mongoid.configure do |config|
   name = "vidibus-permalink_test"
