@@ -9,8 +9,8 @@ module Vidibus
         field :permalink, :type => String
         field :static_permalink, :type => String
 
-        index :permalink
-        index :static_permalink
+        index permalink: 1
+        index static_permalink: 1
 
         attr_accessor :skip_permalink
 

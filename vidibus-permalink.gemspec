@@ -17,10 +17,10 @@ Gem::Specification.new do |s|
 
   s.required_rubygems_version = '>= 1.3.6'
 
-  s.add_dependency 'activesupport', '~> 3'
-  s.add_dependency 'mongoid', '~> 2'
+  s.add_dependency 'activesupport', '>= 3'
+  s.add_dependency 'mongoid', '>= 3'
   s.add_dependency 'vidibus-core_extensions'
-  s.add_dependency 'vidibus-uuid', '~> 0.4'
+  s.add_dependency 'vidibus-uuid'
   s.add_dependency 'vidibus-words'
 
   s.add_development_dependency 'bundler', '>= 1.0.0'

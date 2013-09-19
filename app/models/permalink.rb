@@ -17,7 +17,7 @@ class Permalink
   validates :linkable_uuid, :uuid => true
   validates :value, :linkable_class, :presence => true
 
-  index :value
+  index value: 1
 
   # Sets object as linkable.
   def linkable=(obj)
@@ -166,11 +166,9 @@ class Permalink
     return unless linkable
     conditions = {:linkable_uuid => linkable_uuid, :_id => {"$ne" => _id}}
     conditions[:scope] = Permalink.scope_list(scope) if scope.present?
-    collection.update(
-      conditions,
-      {"$set" => {:_current => false}},
-      {:multi => true}
-    )
+    collection.
+      find(conditions).
+      update({'$set' => {_current: false}}, {multi: true})
   end
 
   # Sets the lastly updated permalink of the assigned linkable as current one.

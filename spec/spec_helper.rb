@@ -14,16 +14,15 @@ Dir[File.expand_path('spec/support/**/*.rb')].each { |f| require f }
 require 'models/permalink'
 
 Mongoid.configure do |config|
-  name = 'vidibus-permalink_test'
-  host = 'localhost'
-  config.master = Mongo::Connection.new.db(name)
-  config.logger = nil
+  config.connect_to('vidibus-permalink_test')
 end
 
 RSpec.configure do |config|
   config.mock_with :rr
   config.before(:each) do
-    Mongoid.master.collections.select {|c| c.name !~ /system/}.each(&:drop)
+    Mongoid::Sessions.default.collections.select do |c|
+      c.name !~ /system/
+    end.each(&:drop)
   end
 end
 
