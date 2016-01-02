@@ -2,3 +2,5 @@ rvm:
   - 1.9.3
 script: 'bundle exec rspec spec --format progress'
 services: mongodb
+before_install:
+  - gem install bundler
