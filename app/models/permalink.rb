@@ -144,6 +144,7 @@ class Permalink
   def increment(string)
     _existing = existing(string)
     return string unless _existing.any?
+    return string unless _existing.detect {|e| e.value == string}
     number = 1
     while true
       number += 1

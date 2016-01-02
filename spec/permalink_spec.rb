@@ -162,6 +162,14 @@ describe "Permalink" do
       this.value.should eql("hey-joe-2")
     end
 
+    it "should re-use permalinks as they become available again" do
+      this
+      create_permalink(:value => "Hey Joe!")
+      this.destroy
+      other = create_permalink(:value => "Hey Joe!")
+      other.value.should eql("hey-joe")
+    end
+
     it "should be called before validation" do
       mock(this).sanitize_value!
       this.valid?
