@@ -60,7 +60,7 @@ module Vidibus
       private
 
       def resolve_path
-        results = ::Permalink.for_scope(@scope).any_in(:value => parts)
+        results = ::Permalink.for_scope(@scope).any_in(value: parts)
         links = Array.new(parts.length)
         done = {}
         for result in results
@@ -76,11 +76,11 @@ module Vidibus
 
       # Returns an array containing the current permalinks of all objects.
       def current_parts
-        objects.map {|o| o.current.value}
+        objects.map { |o| o.current.value }
       end
 
       def redirectables
-        objects.select {|o| !o.current?}
+        objects.select { |o| !o.current? }
       end
     end
   end

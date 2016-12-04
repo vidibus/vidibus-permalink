@@ -6,18 +6,18 @@ module Vidibus
       class PermalinkConfigurationError < StandardError; end
 
       included do
-        field :permalink, :type => String
-        field :static_permalink, :type => String
+        field :permalink, type: String
+        field :static_permalink, type: String
 
         index permalink: 1
         index static_permalink: 1
 
         attr_accessor :skip_permalink
 
-        before_validation :set_permalink, :unless => :skip_permalink
-        validates :permalink, :presence => true, :unless => :skip_permalink
+        before_validation :set_permalink, unless: :skip_permalink
+        validates :permalink, presence: true, unless: :skip_permalink
 
-        after_save :store_permalink_object, :unless => :skip_permalink
+        after_save :store_permalink_object, unless: :skip_permalink
         after_destroy :destroy_permalink_objects
       end
 
@@ -42,18 +42,23 @@ module Vidibus
 
       # Returns the defined permalink repository object.
       def permalink_repository
-        @permalink_repository ||= (self.class.permalink_options[:repository] == false) ? nil : ::Permalink
+        @permalink_repository ||= begin
+          self.class.permalink_options[:repository] == false ? nil : ::Permalink
+        end
       end
 
       # Returns the current permalink object.
       def permalink_object
-        @permalink_object ||
-          permalink_repository.for_linkable(self).where(:_current => true).first if permalink_repository
+        @permalink_object || if permalink_repository
+          permalink_repository.for_linkable(self).where(_current: true).first
+        end
       end
 
       # Returns all permalink objects ordered by time of update.
       def permalink_objects
-        permalink_repository.for_linkable(self).asc(:updated_at) if permalink_repository
+        if permalink_repository
+          permalink_repository.for_linkable(self).asc(:updated_at)
+        end
       end
 
       # Returns permalink scope.
@@ -66,14 +71,21 @@ module Vidibus
       # Returns a existing or new permalink object with wanted value.
       # The permalink scope is also applied
       def permalink_object_by_value(value)
-        permalink_repository.for_linkable(self).for_value(value).for_scope(permalink_scope).first ||
-          permalink_repository.new(:value => value, :scope => permalink_scope, :linkable => self)
+        item = permalink_repository
+          .for_linkable(self)
+          .for_value(value)
+          .for_scope(permalink_scope)
+          .first
+        item ||= permalink_repository.new({
+          value: value,
+          scope: permalink_scope,
+          linkable: self
+        })
       end
 
       def get_scope
         scope = self.class.permalink_options[:scope]
         return unless scope
-
         {}.tap do |hash|
           scope.each do |key, value|
             if value.kind_of?(String)
@@ -129,7 +141,9 @@ module Vidibus
       end
 
       def destroy_permalink_objects
-        permalink_repository.delete_all(:conditions => {:linkable_uuid => uuid}) if permalink_repository
+        if permalink_repository
+          permalink_repository.delete_all(conditions: {linkable_uuid: uuid})
+        end
       end
     end
   end

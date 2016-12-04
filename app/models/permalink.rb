@@ -7,15 +7,15 @@ class Permalink
   field :value
   field :linkable_class
   field :linkable_uuid
-  field :scope, :type => Array
-  field :_current, :type => Boolean, :default => true
+  field :scope, type: Array
+  field :_current, type: Boolean, default: true
 
   before_validation :sanitize_value!
-  after_save :unset_other_current, :if => :current?
-  after_destroy :set_last_current, :if => :current?
+  after_save :unset_other_current, if: :current?
+  after_destroy :set_last_current, if: :current?
 
-  validates :linkable_uuid, :uuid => true
-  validates :value, :linkable_class, :presence => true
+  validates :linkable_uuid, uuid: true
+  validates :value, :linkable_class, presence: true
 
   index value: 1
 
@@ -69,7 +69,7 @@ class Permalink
       if current?
         self
       else
-        Permalink.where(:linkable_uuid => linkable_uuid, :_current => true).first
+        Permalink.where(linkable_uuid: linkable_uuid, _current: true).first
       end
     end
   end
@@ -83,18 +83,18 @@ class Permalink
   class << self
     # Scope method for finding Permalinks for given object.
     def for_linkable(object)
-      where(:linkable_uuid => object.uuid)
+      where(linkable_uuid: object.uuid)
     end
 
     # Scope method for finding Permalinks for given value.
     # The value will be sanitized.
     def for_value(value)
-      where(:value => sanitize(value))
+      where(value: sanitize(value))
     end
 
     def for_scope(scope)
       return all unless scope
-      all_in(:scope => scope_list(scope))
+      all_in(scope: scope_list(scope))
     end
 
     # Returns a dispatcher object for given path.
@@ -112,7 +112,7 @@ class Permalink
     def scope_list(scope)
       return [] unless scope
       return scope if scope.kind_of?(Array)
-      scope.map {|key, value| "#{key}:#{value}"}
+      scope.map { |key, value| "#{key}:#{value}" }
     end
   end
 
@@ -158,24 +158,31 @@ class Permalink
   # Finds existing permalinks with current value.
   def existing(string)
     @existing ||= {}
-    @existing[string] ||=
-      Permalink.for_scope(scope).where(:value => /^#{string}(-\d+)?$/).excludes(:_id => id).to_a
+    @existing[string] ||= Permalink
+      .for_scope(scope)
+      .where(value: /^#{string}(-\d+)?$/)
+      .excludes(:_id => id)
+      .to_a
   end
 
   # Sets _current to false on all permalinks of the assigned linkable.
   def unset_other_current
     return unless linkable
-    conditions = {:linkable_uuid => linkable_uuid, :_id => {"$ne" => _id}}
+    conditions = {linkable_uuid: linkable_uuid, _id: {"$ne" => _id}}
     conditions[:scope] = Permalink.scope_list(scope) if scope.present?
-    collection.
-      find(conditions).
-      update({'$set' => {_current: false}}, {multi: true})
+    collection.find(conditions)
+      .update({'$set' => {_current: false}}, {multi: true})
   end
 
   # Sets the lastly updated permalink of the assigned linkable as current one.
   def set_last_current
-    if last = Permalink.where(:linkable_uuid => linkable_uuid).order_by(:updated_at.desc).limit(1).first
-      last.update_attributes!(:_current => true)
+    last = Permalink
+      .where(linkable_uuid: linkable_uuid)
+      .order_by(:updated_at.desc)
+      .limit(1)
+      .first
+    if last
+      last.update_attributes!(_current: true)
     end
   end
 end
