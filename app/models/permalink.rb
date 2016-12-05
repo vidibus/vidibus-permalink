@@ -2,11 +2,9 @@ class Permalink
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  class UuidRequiredError < StandardError; end
+  belongs_to :linkable, polymorphic: true
 
   field :value
-  field :linkable_class
-  field :linkable_uuid
   field :scope, type: Array
   field :_current, type: Boolean, default: true
 
@@ -14,29 +12,9 @@ class Permalink
   after_save :unset_other_current, if: :current?
   after_destroy :set_last_current, if: :current?
 
-  validates :linkable_uuid, uuid: true
-  validates :value, :linkable_class, presence: true
+  validates :value, :linkable, presence: true
 
   index value: 1
-
-  # Sets object as linkable.
-  def linkable=(obj)
-    @linkable = nil
-    self.linkable_class = obj.class.to_s
-    if uuid = obj.try!(:uuid)
-      self.linkable_uuid = uuid
-    else
-      raise UuidRequiredError.new("The linkable object must respond to #uuid. The gem vidibus-uuid will help you.")
-    end
-  end
-
-  # Returns the linkable object.
-  def linkable
-    @linkable ||= begin
-      return unless linkable_class and linkable_uuid
-      linkable_class.constantize.where(:uuid => linkable_uuid).first
-    end
-  end
 
   # Sanitizes and increments string, if necessary.
   def sanitize_value!
@@ -69,7 +47,7 @@ class Permalink
       if current?
         self
       else
-        Permalink.where(linkable_uuid: linkable_uuid, _current: true).first
+        Permalink.where(linkable_id: linkable.id, _current: true).first
       end
     end
   end
@@ -83,7 +61,7 @@ class Permalink
   class << self
     # Scope method for finding Permalinks for given object.
     def for_linkable(object)
-      where(linkable_uuid: object.uuid)
+      where(linkable_id: object.id)
     end
 
     # Scope method for finding Permalinks for given value.
@@ -168,7 +146,7 @@ class Permalink
   # Sets _current to false on all permalinks of the assigned linkable.
   def unset_other_current
     return unless linkable
-    conditions = {linkable_uuid: linkable_uuid, _id: {"$ne" => _id}}
+    conditions = {linkable_id: linkable.id, _id: {'$ne' => id}}
     conditions[:scope] = Permalink.scope_list(scope) if scope.present?
     collection.find(conditions)
       .update({'$set' => {_current: false}}, {multi: true})
@@ -177,7 +155,7 @@ class Permalink
   # Sets the lastly updated permalink of the assigned linkable as current one.
   def set_last_current
     last = Permalink
-      .where(linkable_uuid: linkable_uuid)
+      .where(linkable_id: linkable.id)
       .order_by(:updated_at.desc)
       .limit(1)
       .first

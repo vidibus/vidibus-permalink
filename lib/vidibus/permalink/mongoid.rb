@@ -142,7 +142,7 @@ module Vidibus
 
       def destroy_permalink_objects
         if permalink_repository
-          permalink_repository.delete_all(conditions: {linkable_uuid: uuid})
+          permalink_repository.delete_all(conditions: {linkable_id: id})
         end
       end
     end

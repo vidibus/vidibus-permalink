@@ -1,7 +1,6 @@
 require "active_support"
 require "mongoid"
 require "vidibus-core_extensions"
-require "vidibus-uuid"
 require "vidibus-words"
 
 require "vidibus/permalink"

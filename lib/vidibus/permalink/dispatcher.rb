@@ -65,7 +65,7 @@ module Vidibus
         done = {}
         for result in results
           if i = parts.index(result.value)
-            key = "#{result.linkable_class}##{result.linkable_uuid}"
+            key = "#{result.linkable_type}##{result.linkable_id}"
             next if done[key]
             links[i] = result
             done[key] = true
