@@ -9,8 +9,8 @@ module Vidibus
         field :permalink, type: String
         field :static_permalink, type: String
 
-        index permalink: 1
-        index static_permalink: 1
+        index({permalink: 1}, {sparse: true})
+        index({static_permalink: 1}, {sparse: true})
 
         attr_accessor :skip_permalink
 
@@ -142,7 +142,7 @@ module Vidibus
 
       def destroy_permalink_objects
         if permalink_repository
-          permalink_repository.delete_all(conditions: {linkable_id: id})
+          permalink_repository.where(linkable_id: id).delete
         end
       end
     end

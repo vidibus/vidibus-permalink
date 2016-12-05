@@ -13,16 +13,13 @@ require 'vidibus-permalink'
 Dir[File.expand_path('spec/support/**/*.rb')].each { |f| require f }
 require 'models/permalink'
 
-Mongoid.configure do |config|
-  config.connect_to('vidibus-permalink_test')
-end
+Mongoid::Config.connect_to('vidibus-permalink_test')
+Mongo::Logger.logger.level = ::Logger::INFO
 
 RSpec.configure do |config|
   config.mock_with :rr
   config.before(:each) do
-    Mongoid::Sessions.default.collections.select do |c|
-      c.name !~ /system/
-    end.each(&:drop)
+    Mongoid::Config.purge!
   end
 end
 

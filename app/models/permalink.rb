@@ -14,7 +14,7 @@ class Permalink
 
   validates :value, :linkable, presence: true
 
-  index value: 1
+  index({value: 1}, {sparse: true})
 
   # Sanitizes and increments string, if necessary.
   def sanitize_value!
@@ -148,8 +148,9 @@ class Permalink
     return unless linkable
     conditions = {linkable_id: linkable.id, _id: {'$ne' => id}}
     conditions[:scope] = Permalink.scope_list(scope) if scope.present?
-    collection.find(conditions)
-      .update({'$set' => {_current: false}}, {multi: true})
+    Permalink.where(conditions).each do |obj|
+      obj.set(_current: false)
+    end
   end
 
   # Sets the lastly updated permalink of the assigned linkable as current one.
