@@ -111,12 +111,12 @@ module Vidibus
 
         changed = false
         values = []
-        for a in attribute_names
-          changed = send("#{a}_changed?") unless changed == true
-          values << send(a)
+        attribute_names.each do |name|
+          changed ||= changes[name].present?
+          values << attributes[name.to_s]
         end
-        return unless permalink.blank? or changed
-        value = values.join(" ")
+        return unless permalink.blank? || changed
+        value = values.join(' ')
         if permalink_repository
           @permalink_object = permalink_object_by_value(value)
           @permalink_object.sanitize_value!
