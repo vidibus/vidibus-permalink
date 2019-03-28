@@ -135,9 +135,10 @@ module Vidibus
 
       # Stores current new permalink object or updates an existing one that matches.
       def store_permalink_object
-        return unless @permalink_object
-        @permalink_object.updated_at = Time.now
-        @permalink_object.save!
+        return unless obj = @permalink_object
+        @permalink_object = nil # reset to avoid storing it again
+        obj.updated_at = Time.now
+        obj.save!
       end
 
       def destroy_permalink_objects
