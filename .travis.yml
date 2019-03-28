@@ -1,5 +1,5 @@
 rvm:
-  - 1.9.3
+  - 2.4.5
 dist: xenial
 script: 'bundle exec rspec spec --format progress'
 services: mongodb
