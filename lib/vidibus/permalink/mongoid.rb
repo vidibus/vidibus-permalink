@@ -112,8 +112,8 @@ module Vidibus
         changed = false
         values = []
         attribute_names.each do |name|
-          changed ||= changes[name].present?
-          values << attributes[name.to_s]
+          changed ||= send("#{name}_changed?")
+          values << send(name)
         end
         return unless permalink.blank? || changed
         value = values.join(' ')

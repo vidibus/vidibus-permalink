@@ -20,6 +20,18 @@ class Car < Base
   field :make
 end
 
+class House < Base
+  permalink :greeting
+
+  def greeting
+    'Hello you'
+  end
+
+  def greeting_changed?
+    true
+  end
+end
+
 describe 'Vidibus::Permalink::Mongoid' do
   let(:john) do
     Model.new(name: 'John Malkovich')
@@ -27,6 +39,10 @@ describe 'Vidibus::Permalink::Mongoid' do
 
   let(:appointment) do
     Appointment.create!(location: 'Bistro', reason: 'Lunch')
+  end
+
+  let(:house) do
+    House.create!
   end
 
   describe 'validation' do
@@ -107,6 +123,10 @@ describe 'Vidibus::Permalink::Mongoid' do
     it 'should be updatable' do
       appointment.update_attributes(reason: 'Drinking')
       appointment.permalink.should eq('drinking-bistro')
+    end
+
+    it 'should work with a method as permalink attribute' do
+      house.permalink.should eq('hello-you')
     end
 
     it 'should raise an error unless permalink attributes have been
