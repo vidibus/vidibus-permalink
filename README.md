@@ -28,4 +28,4 @@ Then call bundle install on your console.
 
 ## Copyright
 
-Copyright (c) 2010-2013 Andre Pankratz. See LICENSE for details.
+Copyright (c) 2010-2019 Andre Pankratz. See LICENSE for details.
