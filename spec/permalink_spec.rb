@@ -250,6 +250,13 @@ describe "Permalink" do
       Permalink.for_value("Hey Joe!").to_a.should eq([link])
     end
 
+    it 'should select permalinks with stopwords' do
+      stub_stopwords(%w[for the])
+      I18n.locale = :en
+      link = Permalink.create!(value: "joe-for-the-win", linkable: asset)
+      Permalink.for_value("Joe for the win!").to_a.should eq([link])
+    end
+
     it 'should not sanitize input if `false` is given as argument' do
       criteria = Permalink.for_value("Hey Joe!", false)
       criteria.class.should eq(Mongoid::Criteria)

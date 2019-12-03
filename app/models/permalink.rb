@@ -66,9 +66,15 @@ class Permalink
 
     # Scope method for finding Permalinks for given value.
     # The value will be sanitized.
-    def for_value(value, sanitize = true)
-      value = sanitize(value) if sanitize
-      where(value: /^#{value}(-\d+)?$/)
+    def for_value(value, do_sanitize = true)
+      if do_sanitize
+        self.or([
+          {value: /^#{sanitize(value)}(-\d+)?$/},
+          {value: /^#{sanitize(value, true)}(-\d+)?$/}
+        ])
+      else
+        where(value: /^#{value}(-\d+)?$/)
+      end
     end
 
     def for_scope(scope)
@@ -83,9 +89,10 @@ class Permalink
 
     # Sanitizes string: Remove stopwords and format as permalink.
     # See Vidibus::CoreExtensions::String for details.
-    def sanitize(string)
+    def sanitize(string, keep_stopwords = false)
       return if string.blank?
-      remove_stopwords(string).permalink
+      string = remove_stopwords(string) unless keep_stopwords
+      string.permalink
     end
 
     def scope_list(scope)
