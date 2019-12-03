@@ -244,6 +244,17 @@ describe "Permalink" do
       this; another
       Permalink.for_value("Hey Joe!").to_a.should eq([this])
     end
+
+    it 'should select incremented permalinks' do
+      link = Permalink.create!(value: "hey-joe-2", linkable: asset)
+      Permalink.for_value("Hey Joe!").to_a.should eq([link])
+    end
+
+    it 'should not sanitize input if `false` is given as argument' do
+      criteria = Permalink.for_value("Hey Joe!", false)
+      criteria.class.should eq(Mongoid::Criteria)
+      criteria.selector['value'].should match('Hey Joe!')
+    end
   end
 
   describe ".for_linkable" do

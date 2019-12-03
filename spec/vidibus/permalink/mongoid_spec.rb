@@ -53,6 +53,14 @@ describe 'Vidibus::Permalink::Mongoid' do
     end
   end
 
+  describe 'saving' do
+    it 'should work if permalink belongs to a different record' do
+      Permalink.create!(value: "john-malkovich", linkable: appointment)
+      john.save!
+      john.permalink.should eq('john-malkovich-2')
+    end
+  end
+
   describe 'destroying' do
     it 'should trigger deleting of all permalink objects with linkable' do
       appointment.destroy

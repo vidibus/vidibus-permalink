@@ -66,8 +66,9 @@ class Permalink
 
     # Scope method for finding Permalinks for given value.
     # The value will be sanitized.
-    def for_value(value)
-      where(value: sanitize(value))
+    def for_value(value, sanitize = true)
+      value = sanitize(value) if sanitize
+      where(value: /^#{value}(-\d+)?$/)
     end
 
     def for_scope(scope)
@@ -138,7 +139,7 @@ class Permalink
     @existing ||= {}
     @existing[string] ||= Permalink
       .for_scope(scope)
-      .where(value: /^#{string}(-\d+)?$/)
+      .for_value(string, false)
       .excludes(:_id => id)
       .to_a
   end
