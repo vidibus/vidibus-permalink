@@ -47,7 +47,11 @@ class Permalink
       if current?
         self
       else
-        Permalink.where(linkable_id: linkable.id, _current: true).first
+        Permalink.where({
+          linkable_id: linkable.id,
+          linkable_type: linkable.class.to_s,
+          _current: true
+        }).first
       end
     end
   end
@@ -61,7 +65,7 @@ class Permalink
   class << self
     # Scope method for finding Permalinks for given object.
     def for_linkable(object)
-      where(linkable_id: object.id)
+      where(linkable_id: object.id, linkable_type: object.class.to_s)
     end
 
     # Scope method for finding Permalinks for given value.
@@ -154,7 +158,11 @@ class Permalink
   # Sets _current to false on all permalinks of the assigned linkable.
   def unset_other_current
     return unless linkable
-    conditions = {linkable_id: linkable.id, _id: {'$ne' => id}}
+    conditions = {
+      linkable_id: linkable.id,
+      linkable_type: linkable.class.to_s,
+      _id: {'$ne' => id}
+    }
     conditions[:scope] = Permalink.scope_list(scope) if scope.present?
     Permalink.where(conditions).each do |obj|
       obj.set(_current: false)
@@ -164,7 +172,7 @@ class Permalink
   # Sets the lastly updated permalink of the assigned linkable as current one.
   def set_last_current
     last = Permalink
-      .where(linkable_id: linkable.id)
+      .where(linkable_id: linkable.id, linkable_type: linkable.class.to_s)
       .order_by(:updated_at.desc)
       .limit(1)
       .first
