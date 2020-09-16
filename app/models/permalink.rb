@@ -2,7 +2,7 @@ class Permalink
   include Mongoid::Document
   include Mongoid::Timestamps
 
-  belongs_to :linkable, polymorphic: true
+  belongs_to :linkable, polymorphic: true, autosave: false
 
   field :value
   field :scope, type: Array
