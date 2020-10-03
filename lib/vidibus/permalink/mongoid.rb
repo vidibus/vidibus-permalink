@@ -40,6 +40,18 @@ module Vidibus
         end
       end
 
+      # Ensure that a current permalink object exists for this record.
+      def ensure_permalink_object
+        if permalink_repository
+          permalink_object || begin
+            obj = permalink_object_by_value(permalink)
+            obj.sanitize_value!
+            obj.current!
+            obj.save
+          end
+        end
+      end
+
       # Returns the defined permalink repository object.
       def permalink_repository
         @permalink_repository ||= begin
