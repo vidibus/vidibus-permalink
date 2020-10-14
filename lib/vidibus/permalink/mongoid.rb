@@ -114,7 +114,7 @@ module Vidibus
       end
 
       # Initializes a new permalink object and sets permalink attribute.
-      def set_permalink
+      def set_permalink(force = false)
         begin
           attribute_names = self.class.permalink_attributes
         rescue NoMethodError
@@ -127,7 +127,7 @@ module Vidibus
           changed ||= send("#{name}_changed?")
           values << send(name)
         end
-        return unless permalink.blank? || changed
+        return unless permalink.blank? || changed || force
         value = values.join(' ')
         if permalink_repository
           @permalink_object = permalink_object_by_value(value)
