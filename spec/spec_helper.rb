@@ -18,6 +18,7 @@ Mongo::Logger.logger.level = ::Logger::INFO
 
 RSpec.configure do |config|
   config.mock_with :rr
+  config.include RR::DSL
   config.before(:each) do
     Mongoid::Config.purge!
   end

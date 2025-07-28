@@ -48,8 +48,8 @@ describe 'Vidibus::Permalink::Mongoid' do
   describe 'validation' do
     it 'should fail if permalink is blank' do
       model = Model.new(permalink: '')
-      model.should be_invalid
-      model.errors[:permalink].should eq(["can't be blank"])
+      expect(model).to be_invalid
+      expect(model.errors[:permalink]).to eq(["can't be blank"])
     end
   end
 
@@ -57,62 +57,62 @@ describe 'Vidibus::Permalink::Mongoid' do
     it 'should work if permalink belongs to a different record' do
       Permalink.create!(value: "john-malkovich", linkable: appointment)
       john.save!
-      john.permalink.should eq('john-malkovich-2')
+      expect(john.permalink).to eq('john-malkovich-2')
     end
   end
 
   describe 'destroying' do
     it 'should trigger deleting of all permalink objects with linkable' do
       appointment.destroy
-      Permalink.count.should eq(0)
+      expect(Permalink.count).to eq(0)
     end
 
     it 'should not delete permalink objects of other linkables' do
       john.save
       appointment.destroy
-      Permalink.count.should eq(1)
+      expect(Permalink.count).to eq(1)
     end
   end
 
   describe '#permalink' do
     it 'should set permalink attribute before validation' do
       john.valid?
-      john.permalink.should eq('john-malkovich')
+      expect(john.permalink).to eq('john-malkovich')
     end
 
     it 'should persist the permalink' do
       john.save
       john = Model.first
-      john.permalink.should eq('john-malkovich')
+      expect(john.permalink).to eq('john-malkovich')
     end
 
     it 'should create a permalink object from given attribute after
       creation' do
       john.save
       permalink = Permalink.first
-      permalink.value.should eq('john-malkovich')
+      expect(permalink.value).to eq('john-malkovich')
     end
 
     it 'should not store a new permalink object unless attribute value did
       change' do
       john.save
       john.save
-      Permalink.count.should eq(1)
+      expect(Permalink.count).to eq(1)
     end
 
     it 'should store a new permalink if attributes change' do
       john.save
       john.update_attributes(name: 'Inkognito')
-      john.reload.permalink.should eq('inkognito')
+      expect(john.reload.permalink).to eq('inkognito')
     end
 
     it 'should store a new permalink object if permalink changes' do
       john.save
       john.update_attributes(:name => 'Inkognito')
       permalinks = Permalink.all.to_a
-      permalinks.count.should eq(2)
-      permalinks.last.value.should eq('inkognito')
-      permalinks.last.current?.should eq(true)
+      expect(permalinks.count).to eq(2)
+      expect(permalinks.last.value).to eq('inkognito')
+      expect(permalinks.last.current?).to eq(true)
     end
 
     it 'should should set a former permalink object as current if possible' do
@@ -120,21 +120,21 @@ describe 'Vidibus::Permalink::Mongoid' do
       john.update_attributes(name: 'Inkognito')
       john.update_attributes(name: 'John Malkovich')
       permalinks = Permalink.all.to_a
-      permalinks.count.should eq(2)
-      permalinks.first.current?.should eq(true)
+      expect(permalinks.count).to eq(2)
+      expect(permalinks.first.current?).to eq(true)
     end
 
     it 'should accept multiple attributes' do
-      appointment.permalink.should eq('lunch-bistro')
+      expect(appointment.permalink).to eq('lunch-bistro')
     end
 
     it 'should be updatable' do
       appointment.update_attributes(reason: 'Drinking')
-      appointment.permalink.should eq('drinking-bistro')
+      expect(appointment.permalink).to eq('drinking-bistro')
     end
 
     it 'should work with a method as permalink attribute' do
-      house.permalink.should eq('hello-you')
+      expect(house.permalink).to eq('hello-you')
     end
 
     it 'should raise an error unless permalink attributes have been
@@ -151,20 +151,20 @@ describe 'Vidibus::Permalink::Mongoid' do
 
       it 'should be proper' do
         john = Model.create(name: 'John Malkovich')
-        john.permalink.should eq('john-malkovich')
+        expect(john.permalink).to eq('john-malkovich')
       end
 
       it 'should not be stored as permalink object when :repository option
         is set to false' do
         Model.create(name: 'John Malkovich')
-        Permalink.count.should eq(0)
+        expect(Permalink.count).to eq(0)
       end
 
       it 'should be unique for model' do
         skip 'Allow incrementation for class that serves as repository.'
         Model.create(name: 'John Malkovich')
         john = Model.create(name: 'John Malkovich')
-        john.permalink.should_not eq('john-malkovich')
+        expect(john.permalink).to_not eq('john-malkovich')
       end
     end
   end
@@ -173,15 +173,15 @@ describe 'Vidibus::Permalink::Mongoid' do
     it 'should return the current permalink object' do
       appointment.update_attributes(reason: 'Drinking')
       permalink = appointment.permalink_object
-      permalink.class.should eq(Permalink)
-      permalink.value.should eq(appointment.permalink)
-      permalink.current?.should eq(true)
+      expect(permalink.class).to eq(Permalink)
+      expect(permalink.value).to eq(appointment.permalink)
+      expect(permalink.current?).to eq(true)
     end
 
     it 'should return the permalink object assigned recently' do
       appointment.reason = 'Drinking'
       appointment.valid?
-      appointment.permalink_object.new_record?.should eq(true)
+      expect(appointment.permalink_object.new_record?).to eq(true)
     end
   end
 
@@ -191,7 +191,7 @@ describe 'Vidibus::Permalink::Mongoid' do
         permalink :name, scope: {'realm' => 'rugby'}
       end
       bob = ModelWithScope.new(name: 'Bob Smith')
-      bob.permalink_scope.should eq({'realm' => 'rugby'})
+      expect(bob.permalink_scope).to eq({'realm' => 'rugby'})
     end
 
     it 'should perform and return the current permalink scope' do
@@ -203,7 +203,7 @@ describe 'Vidibus::Permalink::Mongoid' do
       }
       end
       bob = ModelWithScope.new(name: 'Bob Smith')
-      bob.permalink_scope.should eq({
+      expect(bob.permalink_scope).to eq({
         'realm' => 'hockey',
         'category' => 'sport'
       })
@@ -215,7 +215,7 @@ describe 'Vidibus::Permalink::Mongoid' do
       end
 
       bob = ModelWithScope.new(name: 'Bob Smith')
-      expect { bob.permalink_scope }.to raise_exception
+      expect { bob.permalink_scope }.to raise_error(Vidibus::Permalink::Mongoid::PermalinkConfigurationError)
     end
   end
 
@@ -226,37 +226,37 @@ describe 'Vidibus::Permalink::Mongoid' do
       stub_time!('05.11.2010')
       appointment.update_attributes(reason: 'Lunch')
       permalinks = appointment.permalink_objects
-      permalinks[0].value.should eq('drinking-bistro')
-      permalinks[1].value.should eq('lunch-bistro')
+      expect(permalinks[0].value).to eq('drinking-bistro')
+      expect(permalinks[1].value).to eq('lunch-bistro')
     end
 
     it 'should only return permalink objects assigned to the current
       linkable' do
       john.save
-      appointment.permalink_objects.count.should eq(1)
+      expect(appointment.permalink_objects.count).to eq(1)
     end
   end
 
   describe '#permalink_repository' do
     it 'should default to Vidibus::Permalink' do
       Car.permalink(:whatever)
-      Car.new.permalink_repository.should eq(Permalink)
+      expect(Car.new.permalink_repository).to eq(Permalink)
     end
 
     it 'should be nil if :repository option is set to false' do
       Car.permalink(:whatever, repository: false)
-      Car.new.permalink_repository.should eq(nil)
+      expect(Car.new.permalink_repository).to eq(nil)
     end
   end
 
   describe '#static_permalink' do
     it 'should be nil before validation' do
-      john.static_permalink.should eq(nil)
+      expect(john.static_permalink).to eq(nil)
     end
 
     it 'should be set from permalink' do
       john.valid?
-      john.static_permalink.should eq('john-malkovich')
+      expect(john.static_permalink).to eq('john-malkovich')
     end
 
     context 'with an existing permalink' do
@@ -272,7 +272,7 @@ describe 'Vidibus::Permalink::Mongoid' do
         it 'should not change when permalink is changed' do
           john.name = 'Peter Pan'
           john.valid?
-          john.static_permalink.should eq('john-malkovich')
+          expect(john.static_permalink).to eq('john-malkovich')
         end
       end
 
@@ -280,7 +280,7 @@ describe 'Vidibus::Permalink::Mongoid' do
         it 'should change when permalink is changed' do
           john.name = 'Peter Pan'
           john.valid?
-          john.static_permalink.should eq('peter-pan')
+          expect(john.static_permalink).to eq('peter-pan')
         end
       end
     end
@@ -289,12 +289,12 @@ describe 'Vidibus::Permalink::Mongoid' do
   describe '.permalink' do
     it 'should set .permalink_attributes' do
       Car.permalink(:whatever, :it, :takes)
-      Car.permalink_attributes.should eq([:whatever, :it, :takes])
+      expect(Car.permalink_attributes).to eq([:whatever, :it, :takes])
     end
 
     it 'should set .permalink_options' do
       Car.permalink(:whatever, :it, :takes, repository: false)
-      Car.permalink_options.should eq({repository: false})
+      expect(Car.permalink_options).to eq({repository: false})
     end
   end
 end

@@ -83,11 +83,12 @@ module Vidibus
       # Returns a existing or new permalink object with wanted value.
       # The permalink scope is also applied
       def permalink_object_by_value(value)
-        item = permalink_repository
-          .for_linkable(self)
-          .for_value(value)
-          .for_scope(permalink_scope)
-          .first
+        query = permalink_repository.all_of(
+          permalink_repository.for_linkable(self),
+          permalink_repository.for_value(value),
+          permalink_repository.for_scope(permalink_scope)
+        )
+        item = query.first
         item ||= permalink_repository.new({
           value: value,
           scope: permalink_scope,
